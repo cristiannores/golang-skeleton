@@ -52,13 +52,15 @@ The config file is located in ``` shared/utils/config/config.json```
 
 ### Pre-requisites
 
-- Mongo Docker Container UP with Local Default port
+- MongoDB  
+
+Can run the following command: 
 
 ```shell
-docker run --name some-mongo -d mongo:tag
+docker-compose up -d
 ```
 
-- Port 8888 available in local environment or change this in config file and curl methods
+- Port 8888 must be available in local environment or change this in config file , curl methods and docker run 
 
 ### Run Locally
 
