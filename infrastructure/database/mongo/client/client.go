@@ -1,7 +1,7 @@
 package client
 
 import (
-	log "api-bff-golang/infraestructure/logger"
+	log "api-bff-golang/infrastructure/logger"
 	"api-bff-golang/shared/utils/config"
 	"context"
 	"go.mongodb.org/mongo-driver/mongo"

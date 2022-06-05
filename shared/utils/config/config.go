@@ -1,7 +1,7 @@
 package config
 
 import (
-	log "api-bff-golang/infraestructure/logger"
+	log "api-bff-golang/infrastructure/logger"
 	"encoding/json"
 	"errors"
 	"fmt"

@@ -1,8 +1,8 @@
 package use_cases
 
 import (
-	"api-bff-golang/infraestructure/database/mongo/drivers/repository"
-	log "api-bff-golang/infraestructure/logger"
+	"api-bff-golang/infrastructure/database/mongo/drivers/repository"
+	log "api-bff-golang/infrastructure/logger"
 	"errors"
 )
 

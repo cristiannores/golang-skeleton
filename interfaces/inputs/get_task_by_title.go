@@ -1,7 +1,7 @@
 package inputs
 
 import (
-	"api-bff-golang/infraestructure/web/models/response"
+	"api-bff-golang/infrastructure/web/models/response"
 	"api-bff-golang/interfaces/controllers"
 	"github.com/labstack/echo/v4"
 	"net/http"

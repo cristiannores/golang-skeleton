@@ -2,8 +2,8 @@ package inputs
 
 import (
 	"api-bff-golang/domain/entities"
-	log "api-bff-golang/infraestructure/logger"
-	"api-bff-golang/infraestructure/web/models/response"
+	log "api-bff-golang/infrastructure/logger"
+	"api-bff-golang/infrastructure/web/models/response"
 	"api-bff-golang/interfaces/controllers"
 	"github.com/labstack/echo/v4"
 	"net/http"

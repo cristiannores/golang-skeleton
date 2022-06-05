@@ -3,8 +3,8 @@ package controllers
 import (
 	"api-bff-golang/domain/entities"
 	use_cases "api-bff-golang/domain/use-cases"
-	"api-bff-golang/infraestructure/database/mongo/drivers/models"
-	log "api-bff-golang/infraestructure/logger"
+	"api-bff-golang/infrastructure/database/mongo/drivers/models"
+	log "api-bff-golang/infrastructure/logger"
 )
 
 type AddTaskControllerInterface interface {

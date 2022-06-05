@@ -1,10 +1,10 @@
 package main
 
 import (
-	"api-bff-golang/infraestructure"
-	"api-bff-golang/infraestructure/database/mongo/client"
-	log "api-bff-golang/infraestructure/logger"
-	"api-bff-golang/infraestructure/web"
+	"api-bff-golang/infrastructure"
+	"api-bff-golang/infrastructure/database/mongo/client"
+	log "api-bff-golang/infrastructure/logger"
+	"api-bff-golang/infrastructure/web"
 	"api-bff-golang/shared/utils/config"
 	"os"
 	"os/signal"
@@ -21,7 +21,7 @@ func main() {
 	signal.Notify(quit, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 	web.NewWebServer()
 
-	mongoClient := infraestructure.SetupDependencies()
+	mongoClient := infrastructure.SetupDependencies()
 
 	go web.Start()
 

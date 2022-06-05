@@ -2,7 +2,7 @@ package controllers
 
 import (
 	use_cases "api-bff-golang/domain/use-cases"
-	"api-bff-golang/infraestructure/database/mongo/drivers/models"
+	"api-bff-golang/infrastructure/database/mongo/drivers/models"
 )
 
 type FindAllTaskControllerInterface interface {

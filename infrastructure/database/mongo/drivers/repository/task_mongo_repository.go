@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"api-bff-golang/infraestructure/database/mongo/client"
-	"api-bff-golang/infraestructure/database/mongo/drivers/models"
-	log "api-bff-golang/infraestructure/logger"
+	"api-bff-golang/infrastructure/database/mongo/client"
+	"api-bff-golang/infrastructure/database/mongo/drivers/models"
+	log "api-bff-golang/infrastructure/logger"
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

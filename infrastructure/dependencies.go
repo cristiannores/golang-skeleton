@@ -1,11 +1,11 @@
-package infraestructure
+package infrastructure
 
 import (
 	use_cases "api-bff-golang/domain/use-cases"
-	mongo "api-bff-golang/infraestructure/database/mongo/client"
-	"api-bff-golang/infraestructure/database/mongo/drivers/repository"
-	log "api-bff-golang/infraestructure/logger"
-	"api-bff-golang/infraestructure/web"
+	mongo "api-bff-golang/infrastructure/database/mongo/client"
+	"api-bff-golang/infrastructure/database/mongo/drivers/repository"
+	log "api-bff-golang/infrastructure/logger"
+	"api-bff-golang/infrastructure/web"
 	controllers2 "api-bff-golang/interfaces/controllers"
 	"api-bff-golang/interfaces/inputs"
 )

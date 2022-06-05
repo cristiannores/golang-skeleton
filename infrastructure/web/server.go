@@ -1,8 +1,8 @@
 package web
 
 import (
-	log "api-bff-golang/infraestructure/logger"
-	"api-bff-golang/infraestructure/web/routes"
+	log "api-bff-golang/infrastructure/logger"
+	"api-bff-golang/infrastructure/web/routes"
 	"api-bff-golang/interfaces/inputs"
 	"api-bff-golang/shared/utils/config"
 	"context"
