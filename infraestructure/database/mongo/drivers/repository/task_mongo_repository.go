@@ -69,7 +69,7 @@ func (t *TaskMongoRepository) FindAll() ([]models.TaskMongoModel, error) {
 		log.Error("[task_mongo_repository] error parsing database document to struct %s", err.Error())
 		return []models.TaskMongoModel{}, e
 	}
-	log.Error("[task_mongo_repository] task documents found successfully")
+	log.Info("[task_mongo_repository] task documents found successfully")
 	return tasks, nil
 }
 

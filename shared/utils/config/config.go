@@ -91,17 +91,16 @@ func getLocalConfig() error {
 	log.Info("[config.go] getLocalConfig | Init")
 	viper.SetConfigName("config")
 	viper.SetConfigType("json")
-	viper.AddConfigPath("./shared/utils/config/")
+	viper.AddConfigPath("./shared/utils/config")
 	err := viper.ReadInConfig()
 	if err != nil {
-		return errors.New(fmt.Sprintf("Fatal error config file: %s \n", err))
+		return errors.New(fmt.Sprintf("Fatal error config file error: %s \n", err))
 	}
 	validateConfig()
 	return nil
 }
 
 func validateConfig() error {
-
 	file, _ := ioutil.ReadFile("./shared/utils/config/config.json")
 	config := Config{}
 

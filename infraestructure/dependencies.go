@@ -14,7 +14,7 @@ func LoadDatabase() (*mongo.MongoClient, repository.TaskMongoRepositoryInterface
 	m := mongo.NewMongoClient()
 	_, e := m.Connect()
 	if e != nil {
-		log.Error("error connecting to database")
+		log.Fatal("error connecting to database")
 	}
 	tr := repository.NewTaskMongoRepository(m)
 	return m, tr

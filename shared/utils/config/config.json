@@ -1,6 +1,7 @@
 {
   "currentStage": "local",
   "developers": ["Cristian Nores"],
-  "url": "api.terapialuz.cl",
-  "port": "8888"
+  "url": "golang-skeleton",
+  "port": "8888",
+  "mongoUri" :"mongodb://host.docker.internal:27017"
 }

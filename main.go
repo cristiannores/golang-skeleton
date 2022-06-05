@@ -13,7 +13,7 @@ import (
 
 func main() {
 
-	log.Info("staring golang app")
+	log.Info("starting golang app")
 	config.LoadSettings()
 
 	//Signs Catcher

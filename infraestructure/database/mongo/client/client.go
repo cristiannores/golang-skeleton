@@ -2,6 +2,7 @@ package client
 
 import (
 	log "api-bff-golang/infraestructure/logger"
+	"api-bff-golang/shared/utils/config"
 	"context"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -29,7 +30,8 @@ func NewMongoClient() *MongoClient {
 
 func (m *MongoClient) Connect() (*mongo.Client, error) {
 	log.Info("connecting to mongo database")
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://127.0.0.1:27017"))
+
+	client, err := mongo.NewClient(options.Client().ApplyURI(config.GetString("mongoUri")))
 	if err != nil {
 		log.Error(err.Error())
 		return nil, err
@@ -41,9 +43,16 @@ func (m *MongoClient) Connect() (*mongo.Client, error) {
 		log.Error("error connecting to database %s", err.Error())
 		return nil, err
 	}
-	log.Info("mongo database connected successfully")
+
 	m.client = client
 	m.SetDatabase("test")
+
+	log.Info("checking database ....")
+	e := m.Ping()
+	if e != nil {
+		return nil, e
+	}
+	log.Info("mongo database connected successfully")
 	return client, nil
 }
 
@@ -70,6 +79,7 @@ func (m *MongoClient) Ping() error {
 		log.Error("error in ping to database")
 		return e
 	}
+	log.Info("ping successfully to database")
 	return nil
 
 }

@@ -1,9 +1,47 @@
-# API GOLANG SKELETON
+# API GOLANG SKELETON ( Clean architecture )
+
+### Config file 
+
+The config file is located in ``` shared/utils/config/config.json```
+
+```javascript
+/**
+ Some considerations :
+
+ - For run local use "localhost" or use "host.docker.internal" for docker run in mongoUri
+ or replace for your own database implementation
+
+ - Port must be the same in docker run command with the specified in this config file
+ */
+````
+
+````json
+{
+  "currentStage": "local",
+  "developers": ["Cristian Nores"],
+  "url": "golang-skeleton",
+  "port": "8888",
+  "mongoUri" :"mongodb://host.docker.internal:27017"
+}
+````
+
+
+
+### Functionality folder structure
+
+- ```domain/```
+  - ```useCases/```  ( all uses cases )
+  - ```entities/``` ( all business entities )
+- ```interfaces/```
+  - ```controllers/``` ( all controllers )
+  - ```inputs/``` ( all inputs handlers )
+  - ```gateways/```  ( all repository layers *optional )
+  - ```outputs/``` ( all outputs methods )
 
 ## Kafka Example
 - ..soon
-## Mongo Example 
-### File structure mongo files
+## Mongo Task Crud Example 
+### File structure mongo module files
 
 - infrastructure 
   - database 
@@ -23,14 +61,21 @@ docker run --name some-mongo -d mongo:tag
 
 - Port 8888 available in local environment or change this in config file and curl methods
 
-### Run 
+### Run Locally
 
 ```shell
 go mod tidy
 go run main.go
 ```
 
-#### For test use case please execute this command  in the terminal or import in your postman collection
+### Run with docker
+
+```shell
+docker build -t golang-skeleton . 
+docker run -p 8888:8888 golang-skeleton 
+```
+
+#### For run use case please execute this command  in the terminal or import in your postman collection
 
 - Add task
 ``` shell
