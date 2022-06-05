@@ -8,7 +8,7 @@ The config file is located in ``` shared/utils/config/config.json```
 /**
  Some considerations :
 
- - For run local use "localhost" or use "host.docker.internal" for docker run in mongoUri
+ - For run local use "localhost" or use "host.docker.internal"  in mongoUri property
  or replace for your own database implementation
 
  - Port must be the same in docker run command with the specified in this config file
@@ -38,8 +38,7 @@ The config file is located in ``` shared/utils/config/config.json```
   - ```gateways/```  ( all repository layers *optional )
   - ```outputs/``` ( all outputs methods )
 
-## Kafka Example
-- ..soon
+
 ## Mongo Task Crud Example 
 ### File structure mongo module files
 
@@ -103,3 +102,46 @@ curl --location --request GET 'http://localhost:8888/task'
 ```shell
 curl --location --request DELETE 'http://localhost:8888/task/task%20title'
 ```
+
+## Testing
+### Unit test
+````shell
+go test
+````
+### Integration test
+````shell
+go test
+````
+
+### Functionality test
+````shell
+go test
+````
+
+### Performance test
+````shell
+go test
+````
+
+
+## MariaDB Example
+- ...wait a moment :)
+
+## Auth Example
+- ...wait a moment :)
+
+## Kafka Example
+- ...wait a moment :)
+
+## GraphQl Example
+- ...wait a moment :)
+
+## Files uploading Example
+- ...wait a moment :)
+
+## Http client Example
+- ...wait a moment :)
+
+
+
+# Pull Request are welcome  :grinning:
