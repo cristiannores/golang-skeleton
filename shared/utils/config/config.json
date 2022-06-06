@@ -3,5 +3,16 @@
   "developers": ["Cristian Nores"],
   "url": "golang-skeleton",
   "port": "8888",
-  "mongoUri" :"mongodb://host.docker.internal:27017"
+  "mongoUri" :"mongodb://localhost:27017",
+  "kafka" : {
+    "brokers" : ["localhost:9092"],
+    "consumerExample" : {
+      "topic" : "task-example-topic",
+      "prefix" : "task",
+      "enable" : true
+    },
+    "taskProducer":{
+      "topic": "task-example-topic"
+    }
+  }
 }

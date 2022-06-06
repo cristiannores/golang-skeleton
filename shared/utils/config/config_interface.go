@@ -7,3 +7,4 @@ type Config struct {
 	Port         string   `json:"port" validate:"required"`
 	MongoUri     string   `json:"mongoUri" validate:"required"`
 }
+

@@ -42,13 +42,13 @@ The config file is located in ``` shared/utils/config/config.json```
 ## Mongo Task Crud Example 
 ### File structure mongo module files
 
-- infrastructure 
-  - database 
-    - mongo 
-      - client   ( Client of Mongo )
-      - drivers
-        - models     ( models for mongo with validations )
-        - repository ( Repository layer for Mongo )
+- ```infrastructure/``` 
+  - ```database/``` 
+    - ```mongo/``` 
+      - ```client/```   ( Client of Mongo )
+      - ```drivers/```
+        - ```models/```     ( models for mongo with validations )
+        - ```repository/``` ( Repository layer for Mongo )
 
 ### Pre-requisites
 
@@ -86,7 +86,7 @@ curl --location --request POST 'http://localhost:8888/task' \
 --data-raw '{
 "title" : "task title",
 "author" : "task author",
-"tags" : [ "tag test ","tag test"]
+"tags" : [ "tag test","tag test"]
 }' 
 ```
 - Get task by title
@@ -125,14 +125,45 @@ go test
 go test
 ````
 
+## Kafka Example
+- Find a task by title and produce that task into the topic "task-example-topic" ,
+and later a consumer read that message and insert a modified task into database 
+
+Execute this command for find task with title "task title" 
+
+```shell
+curl --location --request GET 'http://localhost:8888/task/send/task%20title'
+```
+
+Execute this command for find the title inserted by kafka consumer 
+
+```shell
+curl --location --request GET 'http://localhost:8888/task/task%20title%20kafka'
+```
+
+should return something the task modified with title and added tag like this
+
+````json
+{
+  "Data": {
+    "ID": "629d58349e6e4634322917db",
+    "Title": "task title kafka",
+    "Author": "task author",
+    "Tags": [
+      "tag test",
+      "tag test",
+      "Send to kafka : 2022.06.02 10:28:12",
+      "received in kafka  : 2022.06.02 10:28:20"
+    ]
+  },
+  "Description": "task found successfully"
+}
+````
 
 ## MariaDB Example
 - ...wait a moment :)
 
 ## Auth Example
-- ...wait a moment :)
-
-## Kafka Example
 - ...wait a moment :)
 
 ## GraphQl Example

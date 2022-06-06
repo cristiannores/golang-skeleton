@@ -24,10 +24,11 @@ func InitRoutes(
 	getTaskByTitleInput inputs.GetTaskByTitleInputInterface,
 	findAllTask inputs.FindAllTaskInputInterface,
 	deleteTaskByTitle inputs.DeleteTaskByTitleInputInterface,
+	getTaskAndSend inputs.GetTaskAndSendInputInterface,
 ) {
 	routes.NewHealthHandler(echoServer)
 	routes.NewReadinessHandler(echoServer)
-	routes.NewTaskHandler(echoServer, addTaskInput, getTaskByTitleInput, findAllTask, deleteTaskByTitle)
+	routes.NewTaskHandler(echoServer, addTaskInput, getTaskByTitleInput, findAllTask, deleteTaskByTitle, getTaskAndSend)
 }
 
 func Start() {

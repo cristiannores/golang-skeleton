@@ -5,6 +5,7 @@ import (
 	"api-bff-golang/infrastructure/database/mongo/drivers/models"
 	"api-bff-golang/infrastructure/database/mongo/drivers/repository"
 	log "api-bff-golang/infrastructure/logger"
+	"api-bff-golang/shared/errors"
 	"encoding/json"
 )
 
@@ -28,7 +29,7 @@ func (a *AddTaskUseCase) Process(t *entities.TaskEntity) (models.TaskMongoModel,
 	id, e := a.taskRepository.Insert(tm)
 	if e != nil {
 		log.Error("[add_task_use_case] error trying insert to the collection %s", e.Error())
-		return models.TaskMongoModel{}, nil
+		return models.TaskMongoModel{}, errors.New([]string{t.Title}, e.Error(), errors.TASK_NOT_INSERTED)
 	}
 	tm.ID = id
 	log.Info("[add_task_use_case] task added successfully %v into database", tm)

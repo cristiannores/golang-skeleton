@@ -5,12 +5,16 @@ import (
 	log "api-bff-golang/infrastructure/logger"
 	"api-bff-golang/infrastructure/web/models/response"
 	"api-bff-golang/interfaces/controllers"
+	"encoding/json"
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"time"
 )
 
 type AddTaskInputInterface interface {
 	FromApi(c echo.Context) error
+	FromKafka(value []byte) error
 }
 
 type AddTaskInput struct {
@@ -44,4 +48,25 @@ func (t *AddTaskInput) FromApi(c echo.Context) error {
 		Data:        r,
 		Description: "task saved successfully",
 	})
+}
+
+func (t *AddTaskInput) FromKafka(value []byte) error {
+
+	task := entities.TaskEntity{}
+
+	if err := json.Unmarshal(value, &task); err != nil {
+		log.Error("Error converting checkout order to ox order %s", err.Error())
+		return nil
+	}
+	currentTime := time.Now()
+	task.Tags = append(task.Tags, fmt.Sprintf("received in kafka  : %s", currentTime.Format("2006.01.02 15:04:05")))
+	_, e := t.controller.Process(&task)
+
+	if e != nil {
+		log.Error("Error faving task from kafka error %s", e.Error())
+		return e
+	}
+
+	log.Info("Task saved sucessfully from kafka")
+	return nil
 }
