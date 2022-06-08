@@ -1,28 +1,40 @@
 package consumers
 
 import (
+	"api-bff-golang/infrastructure/database/mongo/drivers/models"
 	log "api-bff-golang/infrastructure/logger"
-	kafkastreamer "api-bff-golang/infrastructure/stream-messaging/kafka"
+	"api-bff-golang/infrastructure/stream-messaging/kafka/consumer"
 	"api-bff-golang/interfaces/inputs"
-	"api-bff-golang/shared/utils/config"
+	"context"
 )
 
 const APP = "golang-skeleton"
 
-func InitConsumers(
-	kafka *kafkastreamer.KafkaStream,
+type TaskResultKakfa struct {
+	result models.TaskMongoModel
+	e      error
+}
+
+func AddTaskConsumer(
 	addTask inputs.AddTaskInputInterface,
+	consumer consumer.ConsumerClientInterface,
+) <-chan TaskResultKakfa {
+	resultsTask := make(chan TaskResultKakfa)
+	go func() {
 
-) {
+		defer close(resultsTask)
+		for m := range consumer.Consumer(context.Background()) {
 
-	if config.GetBool("kafka.consumerExample.enable") {
-		kafka.AddConsumer(kafkastreamer.ConsumerParams{
-			Topic:    config.GetString("kafka.consumerExample.topic"),
-			Consumer: config.GetString("kafka.consumerExample.prefix") + APP,
-			Callback: addTask.FromKafka,
-		})
-	} else {
-		log.Info("topic consumer disabled %s", config.GetString("kafka.consumeExample.topic"))
-	}
+			log.Info("consumer 1 reading message channel consumer message %s", string(m.Message))
+			r, e := addTask.FromKafka(m.Message)
+
+			var t TaskResultKakfa
+			t.result = r
+			t.e = e
+
+			resultsTask <- t
+		}
+	}()
+	return resultsTask
 
 }

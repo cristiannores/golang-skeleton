@@ -6,20 +6,24 @@ import (
 	"api-bff-golang/infrastructure/database/mongo/drivers/repository"
 	log "api-bff-golang/infrastructure/logger"
 	"api-bff-golang/infrastructure/metrics/prometheus"
-	kafkastreamer "api-bff-golang/infrastructure/stream-messaging/kafka"
+	"api-bff-golang/infrastructure/stream-messaging/kafka/consumer"
 	"api-bff-golang/infrastructure/stream-messaging/kafka/consumers"
+	"api-bff-golang/infrastructure/stream-messaging/kafka/producer"
 	"api-bff-golang/infrastructure/web"
 	controllers2 "api-bff-golang/interfaces/controllers"
 	"api-bff-golang/interfaces/inputs"
+	"api-bff-golang/shared/utils/config"
 )
+
+const APP = "endurance-ox-core"
 
 func LoadDatabase() (*mongo.MongoClient, repository.TaskMongoRepositoryInterface) {
 	m := mongo.NewMongoClient()
-	_, e := m.Connect()
+	c, e := m.Connect()
 	if e != nil {
 		log.Fatal("error connecting to database")
 	}
-	tr := repository.NewTaskMongoRepository(m)
+	tr := repository.NewTaskMongoRepository(c)
 	return m, tr
 }
 
@@ -27,7 +31,6 @@ func SetupDependencies() *mongo.MongoClient {
 	log.Info("Setup dependencies ...")
 	//modules
 	mongoClient, taskRepository := LoadDatabase()
-	kafka := kafkastreamer.NewKafkaStream()
 	metric := prometheus.NewMetric()
 	metric.InitMetrics()
 	// add task functionality
@@ -48,13 +51,15 @@ func SetupDependencies() *mongo.MongoClient {
 	inputDeleteTaskByTitle := inputs.NewDeleteTaskByTitleInput(ctrlDeleteTaskByTitle)
 
 	// get task and send functionality
-	useCaseGetTaskAndSend := use_cases.NewGetTaskAndSendUseCase(kafka, useCaseGetTask)
+	producerTask := producer.New(config.GetArray("kafka.brokers"), config.GetString("kafka.consumerExample.topic"))
+	useCaseGetTaskAndSend := use_cases.NewGetTaskAndSendUseCase(producerTask, useCaseGetTask)
 	ctrlGetTaskAndSend := controllers2.NewGetTaskAndSendController(useCaseGetTaskAndSend)
 	inputGetTaskAndSend := inputs.NewGetLastTaskAndSendInput(ctrlGetTaskAndSend)
 
 	web.InitRoutes(inputAddTask, inputGetTask, inputFindAllTask, inputDeleteTaskByTitle, inputGetTaskAndSend)
 
-	go consumers.InitConsumers(kafka, inputAddTask)
+	addTaskConsumer := consumer.New(config.GetArray("kafka.brokers"), config.GetString("kafka.consumerExample.topic"), config.GetString("kafka.consumerExample.prefix")+APP)
+	consumers.AddTaskConsumer(inputAddTask, addTaskConsumer)
 	log.Info("Setup dependencies ready .")
 
 	return mongoClient

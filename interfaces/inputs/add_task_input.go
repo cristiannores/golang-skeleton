@@ -2,6 +2,7 @@ package inputs
 
 import (
 	"api-bff-golang/domain/entities"
+	"api-bff-golang/infrastructure/database/mongo/drivers/models"
 	log "api-bff-golang/infrastructure/logger"
 	"api-bff-golang/infrastructure/web/models/response"
 	"api-bff-golang/interfaces/controllers"
@@ -14,7 +15,7 @@ import (
 
 type AddTaskInputInterface interface {
 	FromApi(c echo.Context) error
-	FromKafka(value []byte) error
+	FromKafka(value []byte) (models.TaskMongoModel, error)
 }
 
 type AddTaskInput struct {
@@ -50,23 +51,23 @@ func (t *AddTaskInput) FromApi(c echo.Context) error {
 	})
 }
 
-func (t *AddTaskInput) FromKafka(value []byte) error {
+func (t *AddTaskInput) FromKafka(value []byte) (models.TaskMongoModel, error) {
 
 	task := entities.TaskEntity{}
 
 	if err := json.Unmarshal(value, &task); err != nil {
 		log.Error("Error converting checkout order to ox order %s", err.Error())
-		return nil
+		return models.TaskMongoModel{}, err
 	}
 	currentTime := time.Now()
 	task.Tags = append(task.Tags, fmt.Sprintf("received in kafka  : %s", currentTime.Format("2006.01.02 15:04:05")))
-	_, e := t.controller.Process(&task)
+	r, e := t.controller.Process(&task)
 
 	if e != nil {
 		log.Error("Error faving task from kafka error %s", e.Error())
-		return e
+		return r, e
 	}
 
 	log.Info("Task saved sucessfully from kafka")
-	return nil
+	return r, nil
 }

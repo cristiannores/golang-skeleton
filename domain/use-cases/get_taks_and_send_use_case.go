@@ -2,8 +2,8 @@ package use_cases
 
 import (
 	log "api-bff-golang/infrastructure/logger"
-	kafkastreamer "api-bff-golang/infrastructure/stream-messaging/kafka"
-	"api-bff-golang/shared/utils/config"
+	"api-bff-golang/infrastructure/stream-messaging/kafka/producer"
+	"context"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -14,12 +14,12 @@ type GetTaskAndSendUseCaseInterface interface {
 }
 
 type GetTaskAndSendUseCase struct {
-	kafka                 *kafkastreamer.KafkaStream
+	producer              producer.ProducerInterface
 	getTaskByTitleUseCase GetTaskByNameUseCaseInterface
 }
 
-func NewGetTaskAndSendUseCase(kafka *kafkastreamer.KafkaStream, getTaskByTitleUseCase GetTaskByNameUseCaseInterface) *GetTaskAndSendUseCase {
-	return &GetTaskAndSendUseCase{kafka, getTaskByTitleUseCase}
+func NewGetTaskAndSendUseCase(producer producer.ProducerInterface, getTaskByTitleUseCase GetTaskByNameUseCaseInterface) *GetTaskAndSendUseCase {
+	return &GetTaskAndSendUseCase{producer, getTaskByTitleUseCase}
 }
 
 func (g *GetTaskAndSendUseCase) Process(title string) error {
@@ -38,11 +38,7 @@ func (g *GetTaskAndSendUseCase) Process(title string) error {
 
 	m, _ := json.Marshal(t)
 
-	e = g.kafka.ProduceMessage(kafkastreamer.ProducerParams{
-		Topic:   config.GetString("kafka.taskProducer.topic"),
-		Message: string(m),
-		Key:     "myKey",
-	})
+	e = g.producer.Produce(context.Background(), m, []byte("mi key"))
 
 	if e != nil {
 		log.Error("[get_task_and_send_use_case] error sending message to kafka %s error %s", m, e.Error())

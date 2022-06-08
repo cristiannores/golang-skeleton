@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"api-bff-golang/infrastructure/database/mongo/client"
 	"api-bff-golang/infrastructure/database/mongo/drivers/models"
 	log "api-bff-golang/infrastructure/logger"
 	"context"
@@ -18,15 +17,15 @@ type TaskMongoRepositoryInterface interface {
 	DeleteByTitle(title string) (int64, error)
 }
 type TaskMongoRepository struct {
-	client     *client.MongoClient
+	client     *mongo.Client
 	collection *mongo.Collection
 	ctx        context.Context
 }
 
-func NewTaskMongoRepository(client *client.MongoClient) *TaskMongoRepository {
-	collection := client.GetCollection("tasks")
+func NewTaskMongoRepository(client *mongo.Client) *TaskMongoRepository {
+	collection := client.Database("db1").Collection("tasks")
 	return &TaskMongoRepository{
-		client, collection, client.Ctx,
+		client, collection, context.Background(),
 	}
 }
 
@@ -62,7 +61,7 @@ func (t *TaskMongoRepository) FindAll() ([]models.TaskMongoModel, error) {
 	r, e := t.collection.Find(t.ctx, bson.M{}, opts)
 
 	if e != nil {
-		log.Error("[task_mongo_repository] error getting task document to struct %s")
+		log.Error("[task_mongo_repository] error getting task document to struct %s", e.Error())
 		return []models.TaskMongoModel{}, e
 	}
 	if err := r.All(t.ctx, &tasks); err != nil {
