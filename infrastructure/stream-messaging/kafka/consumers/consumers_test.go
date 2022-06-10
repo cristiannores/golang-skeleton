@@ -6,6 +6,7 @@ import (
 	"api-bff-golang/infrastructure/database/mongo/drivers/repository"
 	"api-bff-golang/infrastructure/stream-messaging/kafka/consumer"
 	controllers2 "api-bff-golang/interfaces/controllers"
+	"api-bff-golang/interfaces/gateways"
 	"api-bff-golang/interfaces/inputs"
 	"context"
 	"encoding/json"
@@ -19,7 +20,6 @@ import (
 	"time"
 
 	. "github.com/onsi/gomega"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongodb "go.mongodb.org/mongo-driver/mongo"
 	mongooptions "go.mongodb.org/mongo-driver/mongo/options"
 	"testing"
@@ -37,18 +37,17 @@ var _ = Describe("with containers & mocks gomock", Ordered, func() {
 		ctrl               *gomock.Controller
 		ctrlAddTask        controllers2.AddTaskControllerInterface
 		inputAddTask       inputs.AddTaskInputInterface
-		taskRepositoryMock *repository.MockTaskMongoRepositoryInterface
+		taskGatewayMock    *gateways.MockTaskGatewayInterface
 		consumerClientMock *consumer.MockConsumerClientInterface
 	)
 
 	BeforeAll(func() {
 		ctrl = gomock.NewController(GinkgoT())
-		taskRepositoryMock = repository.NewMockTaskMongoRepositoryInterface(ctrl)
 		consumerClientMock = consumer.NewMockConsumerClientInterface(ctrl)
 
 	})
 	When("input has correct parameters [with container]", func() {
-		It("should return sucess  message", func() {
+		It("should return success  message", func() {
 
 			// DATABASE
 			pMongo := mongo.Preset(
@@ -82,7 +81,8 @@ var _ = Describe("with containers & mocks gomock", Ordered, func() {
 
 			// DATABASE
 			taskRepository := repository.NewTaskMongoRepository(client)
-			useCaseAddTask = use_cases.NewAddTaskUseCase(taskRepository)
+			taskGateway := gateways.NewTaskGateway(taskRepository)
+			useCaseAddTask = use_cases.NewAddTaskUseCase(taskGateway)
 			ctrlAddTask = controllers2.NewAddTaskController(useCaseAddTask)
 			inputAddTask = inputs.NewAddTaskInput(ctrlAddTask)
 
@@ -119,9 +119,13 @@ var _ = Describe("with containers & mocks gomock", Ordered, func() {
 
 	When("input has correct parameters [with mock]", func() {
 		It("should return success model", func() {
-			lala := "my id"
-			x, _ := primitive.ObjectIDFromHex(lala)
-			taskRepositoryMock.EXPECT().Insert(gomock.Any()).Return(x, nil).AnyTimes()
+
+			taskGatewayMock = gateways.NewMockTaskGatewayInterface(ctrl)
+			taskGatewayMock.EXPECT().SaveTask(gomock.Any()).Return(entities.TaskEntity{
+				Title:  "my-title",
+				Author: "my-author",
+				Tags:   []string{"my-tag1"},
+			}, nil).AnyTimes()
 
 			channel := make(chan consumer.IncomingMessage)
 			o := entities.TaskEntity{
@@ -140,7 +144,7 @@ var _ = Describe("with containers & mocks gomock", Ordered, func() {
 			}()
 
 			consumerClientMock.EXPECT().Consumer(gomock.Any()).Return(channel).AnyTimes()
-			useCaseAddTask = use_cases.NewAddTaskUseCase(taskRepositoryMock)
+			useCaseAddTask = use_cases.NewAddTaskUseCase(taskGatewayMock)
 			ctrlAddTask = controllers2.NewAddTaskController(useCaseAddTask)
 			inputAddTask = inputs.NewAddTaskInput(ctrlAddTask)
 
@@ -148,7 +152,7 @@ var _ = Describe("with containers & mocks gomock", Ordered, func() {
 			valueReceived := <-result
 
 			Expect(valueReceived.result.Author).To(ContainSubstring("my-author"))
-			Expect(valueReceived.result.ID).To(Equal(x))
+
 		})
 
 	})

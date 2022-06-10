@@ -1,15 +1,15 @@
 package controllers
 
 import (
+	"api-bff-golang/domain/entities"
 	use_cases "api-bff-golang/domain/use-cases"
-	"api-bff-golang/infrastructure/database/mongo/drivers/models"
 	log "api-bff-golang/infrastructure/logger"
 	"api-bff-golang/infrastructure/metrics/prometheus"
 	"api-bff-golang/shared/errors"
 )
 
 type GetTaskByNameControllerInterface interface {
-	Process(title string) (models.TaskMongoModel, error)
+	Process(title string) (entities.TaskEntity, error)
 }
 
 type GetTaskByNameController struct {
@@ -21,14 +21,14 @@ func NewGetTaskByNameController(usecase use_cases.GetTaskByNameUseCaseInterface,
 	return &GetTaskByNameController{usecase, metric}
 }
 
-func (c GetTaskByNameController) Process(title string) (models.TaskMongoModel, error) {
+func (c GetTaskByNameController) Process(title string) (entities.TaskEntity, error) {
 	log.Info("[get_task_by_name_controller] init controller with params %s", title)
 
 	r, e := c.usecase.Process(title)
 
 	if e != nil {
 		errors.ErrorHandler(e, c.metric)
-		return models.TaskMongoModel{}, e
+		return entities.TaskEntity{}, e
 	}
 	return r, nil
 }

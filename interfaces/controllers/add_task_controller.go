@@ -3,12 +3,11 @@ package controllers
 import (
 	"api-bff-golang/domain/entities"
 	use_cases "api-bff-golang/domain/use-cases"
-	"api-bff-golang/infrastructure/database/mongo/drivers/models"
 	log "api-bff-golang/infrastructure/logger"
 )
 
 type AddTaskControllerInterface interface {
-	Process(t *entities.TaskEntity) (models.TaskMongoModel, error)
+	Process(t *entities.TaskEntity) (entities.TaskEntity, error)
 }
 
 type AddTaskController struct {
@@ -19,7 +18,7 @@ func NewAddTaskController(usecase use_cases.AddTaskUseCaseInterface) *AddTaskCon
 	return &AddTaskController{usecase}
 }
 
-func (a *AddTaskController) Process(t *entities.TaskEntity) (models.TaskMongoModel, error) {
+func (a *AddTaskController) Process(t *entities.TaskEntity) (entities.TaskEntity, error) {
 	log.Info("reading message in controller")
 	return a.usecase.Process(t)
 }

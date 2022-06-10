@@ -1,12 +1,12 @@
 package controllers
 
 import (
+	"api-bff-golang/domain/entities"
 	use_cases "api-bff-golang/domain/use-cases"
-	"api-bff-golang/infrastructure/database/mongo/drivers/models"
 )
 
 type FindAllTaskControllerInterface interface {
-	Process() ([]models.TaskMongoModel, error)
+	Process() ([]entities.TaskEntity, error)
 }
 
 type FindAllTaskController struct {
@@ -17,6 +17,6 @@ func NewFindAllTaskController(useCase use_cases.FindAllTaskUseCaseInterface) *Fi
 	return &FindAllTaskController{useCase}
 }
 
-func (f *FindAllTaskController) Process() ([]models.TaskMongoModel, error) {
+func (f *FindAllTaskController) Process() ([]entities.TaskEntity, error) {
 	return f.useCase.Process()
 }

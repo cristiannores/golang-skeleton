@@ -1,30 +1,30 @@
 package use_cases
 
 import (
-	"api-bff-golang/infrastructure/database/mongo/drivers/models"
-	"api-bff-golang/infrastructure/database/mongo/drivers/repository"
+	"api-bff-golang/domain/entities"
 	log "api-bff-golang/infrastructure/logger"
+	"api-bff-golang/interfaces/gateways"
 )
 
 type FindAllTaskUseCaseInterface interface {
-	Process() ([]models.TaskMongoModel, error)
+	Process() ([]entities.TaskEntity, error)
 }
 
 type FindAllTaskUseCase struct {
-	taskRepository repository.TaskMongoRepositoryInterface
+	taskGateway gateways.TaskGatewayInterface
 }
 
-func NewFindAllTaskUseCase(taskRepository repository.TaskMongoRepositoryInterface) *FindAllTaskUseCase {
-	return &FindAllTaskUseCase{taskRepository}
+func NewFindAllTaskUseCase(taskGateway gateways.TaskGatewayInterface) *FindAllTaskUseCase {
+	return &FindAllTaskUseCase{taskGateway}
 }
 
-func (f *FindAllTaskUseCase) Process() ([]models.TaskMongoModel, error) {
+func (f *FindAllTaskUseCase) Process() ([]entities.TaskEntity, error) {
 	log.Info("[find_all_task_use_case] init use case")
 
-	r, e := f.taskRepository.FindAll()
+	r, e := f.taskGateway.FindAll()
 	if e != nil {
-		log.Error("[find_all_task_use_case] error geting all task %s", e.Error())
-		return []models.TaskMongoModel{}, e
+		log.Error("[find_all_task_use_case] error getting all task %s", e.Error())
+		return []entities.TaskEntity{}, e
 	}
 	log.Info("[find_all_task_use_case] tasks found successfully length  %d", len(r))
 	return r, nil

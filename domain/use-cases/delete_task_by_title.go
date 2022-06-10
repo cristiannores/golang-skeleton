@@ -1,9 +1,8 @@
 package use_cases
 
 import (
-	"api-bff-golang/infrastructure/database/mongo/drivers/repository"
 	log "api-bff-golang/infrastructure/logger"
-	"errors"
+	"api-bff-golang/interfaces/gateways"
 )
 
 type DeleteTaskByTitleUseCaseInterface interface {
@@ -11,24 +10,19 @@ type DeleteTaskByTitleUseCaseInterface interface {
 }
 
 type DeleteTaskByTitleUseCase struct {
-	taskRepository repository.TaskMongoRepositoryInterface
+	taskGateway gateways.TaskGatewayInterface
 }
 
-func NewDeleteTaskByTitleUseCase(taskRepository repository.TaskMongoRepositoryInterface) *DeleteTaskByTitleUseCase {
-	return &DeleteTaskByTitleUseCase{taskRepository}
+func NewDeleteTaskByTitleUseCase(taskGateway gateways.TaskGatewayInterface) *DeleteTaskByTitleUseCase {
+	return &DeleteTaskByTitleUseCase{taskGateway}
 }
 
 func (d *DeleteTaskByTitleUseCase) Process(title string) (int64, error) {
-	log.Info("[delete_task_by_title_usecase] init use case with title %s", title)
-
-	r, e := d.taskRepository.DeleteByTitle(title)
+	log.Info("[delete_task_by_title_use_case] init use case with title %s", title)
+	r, e := d.taskGateway.DeleteByTitle(title)
 	if e != nil {
 		log.Error("[delete_task_by_title_use_case] error deleting task by title %s message %s", title, e.Error())
 		return 0, e
-	}
-	if r == 0 {
-		log.Error("[delete_task_by_title_use_case] nothing to delete %s", title)
-		return 0, errors.New("nothing to delete")
 	}
 	log.Info("[delete_task_by_title_use_case] task deleted successfully with title %s quantity %d", title, r)
 	return r, nil

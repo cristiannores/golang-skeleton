@@ -1,7 +1,7 @@
 package consumers
 
 import (
-	"api-bff-golang/infrastructure/database/mongo/drivers/models"
+	"api-bff-golang/domain/entities"
 	log "api-bff-golang/infrastructure/logger"
 	"api-bff-golang/infrastructure/stream-messaging/kafka/consumer"
 	"api-bff-golang/interfaces/inputs"
@@ -11,7 +11,7 @@ import (
 const APP = "golang-skeleton"
 
 type TaskResultKakfa struct {
-	result models.TaskMongoModel
+	result entities.TaskEntity
 	e      error
 }
 

@@ -15,6 +15,7 @@ type Producer struct {
 }
 
 func New(address []string, topic string) *Producer {
+
 	w := &kafka.Writer{
 		Addr:     kafka.TCP(address...),
 		Topic:    topic,

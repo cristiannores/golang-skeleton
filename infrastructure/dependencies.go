@@ -11,6 +11,7 @@ import (
 	"api-bff-golang/infrastructure/stream-messaging/kafka/producer"
 	"api-bff-golang/infrastructure/web"
 	controllers2 "api-bff-golang/interfaces/controllers"
+	"api-bff-golang/interfaces/gateways"
 	"api-bff-golang/interfaces/inputs"
 	"api-bff-golang/shared/utils/config"
 )
@@ -33,26 +34,30 @@ func SetupDependencies() *mongo.MongoClient {
 	mongoClient, taskRepository := LoadDatabase()
 	metric := prometheus.NewMetric()
 	metric.InitMetrics()
+	// gateways
+	taskGateway := gateways.NewTaskGateway(taskRepository)
 	// add task functionality
-	useCaseAddTask := use_cases.NewAddTaskUseCase(taskRepository)
+	useCaseAddTask := use_cases.NewAddTaskUseCase(taskGateway)
 	ctrlAddTask := controllers2.NewAddTaskController(useCaseAddTask)
 	inputAddTask := inputs.NewAddTaskInput(ctrlAddTask)
 	// get task functionality
-	useCaseGetTask := use_cases.NewGetTaskByNameUseCase(taskRepository)
+	useCaseGetTask := use_cases.NewGetTaskByNameUseCase(taskGateway)
 	ctrlGetTask := controllers2.NewGetTaskByNameController(useCaseGetTask, metric)
 	inputGetTask := inputs.NewGetTaskByTitleInput(ctrlGetTask)
 	// find all task functionality
-	useCaseFindAllTask := use_cases.NewFindAllTaskUseCase(taskRepository)
+	useCaseFindAllTask := use_cases.NewFindAllTaskUseCase(taskGateway)
 	ctrlFindAllTask := controllers2.NewFindAllTaskController(useCaseFindAllTask)
 	inputFindAllTask := inputs.NewFindAllTaskInput(ctrlFindAllTask)
 	// delete task by title functionality
-	useCaseDeleteTaskByTitle := use_cases.NewDeleteTaskByTitleUseCase(taskRepository)
+	useCaseDeleteTaskByTitle := use_cases.NewDeleteTaskByTitleUseCase(taskGateway)
 	ctrlDeleteTaskByTitle := controllers2.NewDeleteTaskByTitleController(useCaseDeleteTaskByTitle)
 	inputDeleteTaskByTitle := inputs.NewDeleteTaskByTitleInput(ctrlDeleteTaskByTitle)
 
 	// get task and send functionality
 	producerTask := producer.New(config.GetArray("kafka.brokers"), config.GetString("kafka.consumerExample.topic"))
+
 	useCaseGetTaskAndSend := use_cases.NewGetTaskAndSendUseCase(producerTask, useCaseGetTask)
+
 	ctrlGetTaskAndSend := controllers2.NewGetTaskAndSendController(useCaseGetTaskAndSend)
 	inputGetTaskAndSend := inputs.NewGetLastTaskAndSendInput(ctrlGetTaskAndSend)
 

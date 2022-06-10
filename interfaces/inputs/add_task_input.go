@@ -2,7 +2,6 @@ package inputs
 
 import (
 	"api-bff-golang/domain/entities"
-	"api-bff-golang/infrastructure/database/mongo/drivers/models"
 	log "api-bff-golang/infrastructure/logger"
 	"api-bff-golang/infrastructure/web/models/response"
 	"api-bff-golang/interfaces/controllers"
@@ -15,7 +14,7 @@ import (
 
 type AddTaskInputInterface interface {
 	FromApi(c echo.Context) error
-	FromKafka(value []byte) (models.TaskMongoModel, error)
+	FromKafka(value []byte) (entities.TaskEntity, error)
 }
 
 type AddTaskInput struct {
@@ -51,13 +50,13 @@ func (t *AddTaskInput) FromApi(c echo.Context) error {
 	})
 }
 
-func (t *AddTaskInput) FromKafka(value []byte) (models.TaskMongoModel, error) {
+func (t *AddTaskInput) FromKafka(value []byte) (entities.TaskEntity, error) {
 
 	task := entities.TaskEntity{}
 
 	if err := json.Unmarshal(value, &task); err != nil {
 		log.Error("Error converting checkout order to ox order %s", err.Error())
-		return models.TaskMongoModel{}, err
+		return entities.TaskEntity{}, err
 	}
 	currentTime := time.Now()
 	task.Tags = append(task.Tags, fmt.Sprintf("received in kafka  : %s", currentTime.Format("2006.01.02 15:04:05")))
